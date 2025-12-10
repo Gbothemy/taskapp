@@ -18,7 +18,9 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: process.env.NODE_ENV === 'production' ? false : "http://localhost:3000",
+    origin: process.env.NODE_ENV === 'production' 
+      ? ['https://taskapp-gbothemy.vercel.app', 'https://taskapp.vercel.app'] 
+      : "http://localhost:3000",
     methods: ["GET", "POST"]
   }
 });
@@ -26,7 +28,9 @@ const io = socketIo(server, {
 // Security middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' ? false : "http://localhost:3000",
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://taskapp-gbothemy.vercel.app', 'https://taskapp.vercel.app'] 
+    : "http://localhost:3000",
   credentials: true
 }));
 
@@ -69,7 +73,12 @@ app.use('/api/admin', adminRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'OK', timestamp: new Date().toISOString() });
+  res.json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    database: process.env.DATABASE_MODE || 'demo'
+  });
 });
 
 // Error handling middleware

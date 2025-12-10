@@ -115,7 +115,7 @@ router.post('/register', [
     const { accessToken, refreshToken } = generateTokens(newUser.id);
 
     // Remove password from response
-    const { password: _, ...userResponse } = newUser;
+    const { password: _, password_hash: __, ...userResponse } = newUser;
 
     res.status(201).json({
       message: 'User registered successfully',
@@ -159,7 +159,8 @@ router.post('/login', [
     }
 
     // Check password
-    const isValidPassword = await bcrypt.compare(password, user.password_hash || user.password);
+    const passwordField = user.password_hash || user.password;
+    const isValidPassword = await bcrypt.compare(password, passwordField);
     if (!isValidPassword) {
       return res.status(401).json({ message: 'Invalid credentials' });
     }
@@ -181,7 +182,7 @@ router.post('/login', [
     }
 
     // Remove password from response
-    const { password: _, ...userResponse } = user;
+    const { password: _, password_hash: __, ...userResponse } = user;
 
     res.json({
       message: 'Login successful',
