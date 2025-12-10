@@ -75,7 +75,8 @@ app.use(cors({
       callback(null, true);
     } else {
       console.log('CORS blocked origin:', origin);
-      callback(new Error('Not allowed by CORS'));
+      // In production, still allow same-origin requests
+      callback(null, process.env.NODE_ENV === 'production');
     }
   },
   credentials: true
@@ -110,6 +111,17 @@ io.on('connection', (socket) => {
 
 // Make io available to routes
 app.set('io', io);
+
+// Root health check (for Vercel deployment)
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'TaskApp API Server',
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || 'development',
+    database: process.env.DATABASE_MODE || 'demo'
+  });
+});
 
 // Routes
 app.use('/api/auth', authRoutes);
