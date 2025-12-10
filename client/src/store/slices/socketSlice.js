@@ -1,0 +1,97 @@
+import { createSlice } from '@reduxjs/toolkit';
+import io from 'socket.io-client';
+import { addNotification } from './notificationSlice';
+import { updateBalance } from './walletSlice';
+
+const initialState = {
+  connection: null,
+  connected: false,
+};
+
+const socketSlice = createSlice({
+  name: 'socket',
+  initialState,
+  reducers: {
+    setSocket: (state, action) => {
+      state.connection = action.payload;
+      state.connected = true;
+    },
+    disconnectSocket: (state) => {
+      if (state.connection) {
+        state.connection.disconnect();
+      }
+      state.connection = null;
+      state.connected = false;
+    },
+  },
+});
+
+export const { setSocket, disconnectSocket } = socketSlice.actions;
+
+// Thunk for initializing socket connection
+export const initializeSocket = (userId) => (dispatch) => {
+  const socket = io(process.env.REACT_APP_API_URL || 'http://localhost:5000');
+  
+  socket.on('connect', () => {
+    console.log('Connected to server');
+    socket.emit('join', userId);
+    dispatch(setSocket(socket));
+  });
+
+  socket.on('disconnect', () => {
+    console.log('Disconnected from server');
+    dispatch(disconnectSocket());
+  });
+
+  // Handle real-time notifications
+  socket.on('new_task', (data) => {
+    dispatch(addNotification({
+      type: 'info',
+      title: 'New Task Available',
+      message: data.message,
+      data: data.task,
+    }));
+  });
+
+  socket.on('new_submission', (data) => {
+    dispatch(addNotification({
+      type: 'info',
+      title: 'New Submission',
+      message: `${data.worker.firstName} ${data.worker.lastName} submitted work for "${data.task.title}"`,
+      data: data.submission,
+    }));
+  });
+
+  socket.on('task_approved', (data) => {
+    dispatch(addNotification({
+      type: 'success',
+      title: 'Task Approved!',
+      message: `Your submission for "${data.task.title}" was approved. You earned $${data.earnings}!`,
+      data: data.submission,
+    }));
+    
+    // Update wallet balance
+    dispatch(updateBalance(data.earnings));
+  });
+
+  socket.on('task_rejected', (data) => {
+    dispatch(addNotification({
+      type: 'error',
+      title: 'Task Rejected',
+      message: `Your submission for "${data.task.title}" was rejected. Please review the feedback.`,
+      data: data.submission,
+    }));
+  });
+
+  socket.on('account_status_changed', (data) => {
+    dispatch(addNotification({
+      type: data.status === 'active' ? 'success' : 'warning',
+      title: 'Account Status Changed',
+      message: data.message,
+    }));
+  });
+
+  return socket;
+};
+
+export default socketSlice.reducer;
