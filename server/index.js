@@ -18,9 +18,29 @@ const app = express();
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: process.env.NODE_ENV === 'production' 
-      ? ['https://taskapp-gbothemy.vercel.app', 'https://taskapp.vercel.app'] 
-      : "http://localhost:3000",
+    origin: function (origin, callback) {
+      if (!origin) return callback(null, true);
+      
+      const allowedOrigins = process.env.NODE_ENV === 'production' 
+        ? [
+            'https://taskapp-gbothemy.vercel.app', 
+            'https://taskapp.vercel.app', 
+            'https://taskappv1.vercel.app',
+            /^https:\/\/taskapp.*\.vercel\.app$/
+          ]
+        : ['http://localhost:3000', 'http://localhost:3001'];
+      
+      const isAllowed = allowedOrigins.some(allowedOrigin => {
+        if (typeof allowedOrigin === 'string') {
+          return origin === allowedOrigin;
+        } else if (allowedOrigin instanceof RegExp) {
+          return allowedOrigin.test(origin);
+        }
+        return false;
+      });
+      
+      callback(null, isAllowed);
+    },
     methods: ["GET", "POST"]
   }
 });
@@ -28,9 +48,36 @@ const io = socketIo(server, {
 // Security middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['https://taskapp-gbothemy.vercel.app', 'https://taskapp.vercel.app'] 
-    : "http://localhost:3000",
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    const allowedOrigins = process.env.NODE_ENV === 'production' 
+      ? [
+          'https://taskapp-gbothemy.vercel.app', 
+          'https://taskapp.vercel.app', 
+          'https://taskappv1.vercel.app',
+          /^https:\/\/taskapp.*\.vercel\.app$/
+        ]
+      : ['http://localhost:3000', 'http://localhost:3001'];
+    
+    // Check if origin is allowed
+    const isAllowed = allowedOrigins.some(allowedOrigin => {
+      if (typeof allowedOrigin === 'string') {
+        return origin === allowedOrigin;
+      } else if (allowedOrigin instanceof RegExp) {
+        return allowedOrigin.test(origin);
+      }
+      return false;
+    });
+    
+    if (isAllowed) {
+      callback(null, true);
+    } else {
+      console.log('CORS blocked origin:', origin);
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
   credentials: true
 }));
 
