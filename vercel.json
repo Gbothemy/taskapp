@@ -1,29 +1,27 @@
 {
   "version": 2,
-  "buildCommand": "cd client && npm install && npm run build",
-  "outputDirectory": "client/build",
-  "installCommand": "npm install",
-  "functions": {
-    "api/*.js": {
-      "runtime": "nodejs18.x"
+  "builds": [
+    {
+      "src": "client/package.json",
+      "use": "@vercel/static-build",
+      "config": {
+        "distDir": "build"
+      }
+    },
+    {
+      "src": "api/*.js",
+      "use": "@vercel/node"
     }
-  },
+  ],
   "routes": [
     {
-      "src": "/api/auth/(.*)",
-      "dest": "/api/auth.js"
-    },
-    {
-      "src": "/api/tasks/(.*)",
-      "dest": "/api/tasks.js"
-    },
-    {
-      "src": "/api/health",
-      "dest": "/api/health.js"
+      "src": "/api/(.*)",
+      "dest": "/api/$1.js"
     },
     {
       "src": "/(.*)",
       "dest": "/client/build/index.html"
     }
-  ]
+  ],
+  "installCommand": "npm install && cd client && npm install"
 }
