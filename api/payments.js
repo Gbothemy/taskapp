@@ -1,10 +1,10 @@
-// Serverless function for authentication - uses same server logic
+// Serverless function for payments - uses same server logic
 require('dotenv').config({ path: __dirname + '/.env' });
 const express = require('express');
 const cors = require('cors');
 
 // Import server routes and database configuration
-const authRoutes = require('../server/routes/auth');
+const paymentRoutes = require('../server/routes/payments');
 const { connectDatabase } = require('../server/config/database');
 
 const app = express();
@@ -40,21 +40,11 @@ app.use(cors({
 
 app.use(express.json());
 
-// Use server auth routes
-app.use('/api/auth', authRoutes);
+// Use server payment routes
+app.use('/api/payments', paymentRoutes);
 
-// Health check
-app.get('/health', (req, res) => {
-  res.json({ 
-    status: 'OK', 
-    timestamp: new Date().toISOString(),
-    service: 'auth',
-    database: process.env.DATABASE_MODE || 'demo'
-  });
-});
-
-// Handle auth routes at root level for serverless
-app.use('/', authRoutes);
+// Handle payment routes at root level for serverless
+app.use('/', paymentRoutes);
 
 // Export for Vercel serverless
 module.exports = app;
