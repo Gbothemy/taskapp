@@ -98,6 +98,7 @@ const TaskDebug = () => {
 
     setTesting(true);
     try {
+      // Use basic fields only to avoid column errors
       const { data, error } = await supabase
         .from('tasks')
         .insert([{
@@ -106,13 +107,7 @@ const TaskDebug = () => {
           employer_id: user.id,
           category_id: results.categoriesTable?.data?.[0]?.id || null,
           reward_amount: 10.00,
-          difficulty_level: 'easy',
-          requirements: 'No special requirements',
-          deliverables: 'Simple test deliverable',
-          max_submissions: 1,
-          status: 'active',
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString()
+          status: 'active'
         }])
         .select()
         .single();
@@ -127,6 +122,40 @@ const TaskDebug = () => {
     } catch (error) {
       alert(`Error: ${error.message}`);
       console.error('Task creation error:', error);
+    } finally {
+      setTesting(false);
+    }
+  };
+
+  const checkTasksTableSchema = async () => {
+    setTesting(true);
+    try {
+      // Check what columns exist in the tasks table
+      const { data, error } = await supabase
+        .rpc('get_table_columns', { table_name: 'tasks' });
+
+      if (error) {
+        console.log('Cannot check schema via RPC, trying direct query...');
+        // Fallback: try to select from tasks to see what columns exist
+        const { data: sampleTask, error: sampleError } = await supabase
+          .from('tasks')
+          .select('*')
+          .limit(1);
+        
+        if (sampleError) {
+          alert(`Schema check failed: ${sampleError.message}`);
+        } else {
+          const columns = sampleTask?.[0] ? Object.keys(sampleTask[0]) : [];
+          alert(`Available columns: ${columns.join(', ')}`);
+          console.log('Available task columns:', columns);
+        }
+      } else {
+        alert(`Schema check successful: ${data?.length || 0} columns found`);
+        console.log('Task table schema:', data);
+      }
+    } catch (error) {
+      alert(`Schema check error: ${error.message}`);
+      console.error('Schema check error:', error);
     } finally {
       setTesting(false);
     }
@@ -165,6 +194,15 @@ const TaskDebug = () => {
             variant="outline"
           >
             {testing ? 'Creating...' : 'Create Test Task'}
+          </Button>
+          
+          <Button 
+            onClick={checkTasksTableSchema} 
+            disabled={testing}
+            size="sm"
+            variant="outline"
+          >
+            {testing ? 'Checking...' : 'Check Table Schema'}
           </Button>
         </div>
 
