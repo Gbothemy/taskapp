@@ -44,23 +44,32 @@ import MySubmissions from './pages/worker/MySubmissions';
 // Employer Pages
 import EmployerDashboard from './pages/employer/Dashboard';
 import CreateTask from './pages/employer/CreateTask';
+import EditTask from './pages/employer/EditTask';
+import TaskDetailView from './pages/employer/TaskDetailView';
 import MyTasks from './pages/employer/MyTasks';
 import ReviewSubmissions from './pages/employer/ReviewSubmissions';
 
 // Shared Pages
 import UserDashboard from './pages/shared/UserDashboard';
 import Wallet from './pages/shared/Wallet';
+import PaymentMethods from './pages/shared/PaymentMethods';
 import Profile from './pages/shared/Profile';
 import Settings from './pages/shared/Settings';
 
 // Admin Pages
+import AdminOverview from './pages/admin/AdminOverview';
 import AdminDashboard from './pages/admin/Dashboard';
 import UserManagement from './pages/admin/UserManagement';
 import TaskManagement from './pages/admin/TaskManagement';
 import PaymentManagement from './pages/admin/PaymentManagement';
+import ManualPayments from './pages/admin/ManualPayments';
+import Analytics from './pages/admin/Analytics';
+import Reports from './pages/admin/Reports';
+import SystemSettings from './pages/admin/SystemSettings';
 
 // Debug Pages
 import AdminTest from './pages/debug/AdminTest';
+import TaskNavigationTest from './pages/debug/TaskNavigationTest';
 
 function App() {
   const dispatch = useDispatch();
@@ -225,6 +234,16 @@ function App() {
               <CreateTask />
             </ProtectedRoute>
           } />
+          <Route path="/employer/edit-task/:id" element={
+            <ProtectedRoute allowedRoles={['employer']}>
+              <EditTask />
+            </ProtectedRoute>
+          } />
+          <Route path="/employer/task/:id" element={
+            <ProtectedRoute allowedRoles={['employer']}>
+              <TaskDetailView />
+            </ProtectedRoute>
+          } />
           <Route path="/employer/my-tasks" element={
             <ProtectedRoute allowedRoles={['employer']}>
               <MyTasks />
@@ -247,6 +266,11 @@ function App() {
               <Wallet />
             </ProtectedRoute>
           } />
+          <Route path="/payment-methods" element={
+            <ProtectedRoute>
+              <PaymentMethods />
+            </ProtectedRoute>
+          } />
           <Route path="/profile" element={
             <ProtectedRoute>
               <Profile />
@@ -259,6 +283,16 @@ function App() {
           } />
 
           {/* Admin Routes */}
+          <Route path="/admin" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminOverview />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/dashboard" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          } />
           <Route path="/admin/users" element={
             <ProtectedRoute allowedRoles={['admin']}>
               <UserManagement />
@@ -274,9 +308,34 @@ function App() {
               <PaymentManagement />
             </ProtectedRoute>
           } />
+          <Route path="/admin/manual-payments" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <ManualPayments />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/analytics" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <Analytics />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/reports" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <Reports />
+            </ProtectedRoute>
+          } />
+          <Route path="/admin/settings" element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <SystemSettings />
+            </ProtectedRoute>
+          } />
 
           {/* Debug Routes */}
           <Route path="/debug/admin" element={<AdminTest />} />
+          <Route path="/debug/tasks" element={
+            <ProtectedRoute allowedRoles={['employer']}>
+              <TaskNavigationTest />
+            </ProtectedRoute>
+          } />
 
           {/* Catch all route */}
           <Route path="*" element={<Navigate to="/" />} />

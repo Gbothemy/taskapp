@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   CurrencyDollarIcon,
   MagnifyingGlassIcon,
@@ -16,10 +17,11 @@ import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import MobileNav from '../../components/layout/MobileNav';
-import { adminService } from '../../services/adminService';
+import adminService from '../../services/adminService';
 import toast from 'react-hot-toast';
 
 const PaymentManagement = () => {
+  const navigate = useNavigate();
   const [payments, setPayments] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterType, setFilterType] = useState('all');
@@ -342,6 +344,7 @@ const PaymentManagement = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-2">
                         <Button
+                          onClick={() => toast('Payment details view coming soon!')}
                           variant="outline"
                           size="sm"
                           className="text-info-600 border-info-600 hover:bg-info-50"

@@ -144,7 +144,10 @@ const Profile = () => {
             {/* Cover Photo */}
             <div className="h-48 bg-gradient-to-r from-primary-500 via-primary-600 to-secondary-500 rounded-t-2xl relative">
               <div className="absolute inset-0 bg-black/20 rounded-t-2xl"></div>
-              <button className="absolute top-4 right-4 p-2 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 transition-colors">
+              <button 
+                onClick={() => toast('Cover photo upload coming soon!')}
+                className="absolute top-4 right-4 p-2 bg-white/20 backdrop-blur-sm rounded-xl text-white hover:bg-white/30 transition-colors"
+              >
                 <CameraIcon className="w-5 h-5" />
               </button>
             </div>
@@ -155,7 +158,10 @@ const Profile = () => {
                 <div className="w-32 h-32 bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center text-white text-3xl font-black shadow-xl border-4 border-white">
                   {getInitials() || <UserIcon className="w-16 h-16" />}
                 </div>
-                <button className="absolute -bottom-2 -right-2 p-2 bg-primary-600 text-white rounded-xl shadow-lg hover:bg-primary-700 transition-colors">
+                <button 
+                  onClick={() => toast('Profile photo upload coming soon!')}
+                  className="absolute -bottom-2 -right-2 p-2 bg-primary-600 text-white rounded-xl shadow-lg hover:bg-primary-700 transition-colors"
+                >
                   <CameraIcon className="w-4 h-4" />
                 </button>
               </div>

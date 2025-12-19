@@ -197,15 +197,15 @@ const MobileNav = () => {
               </Link>
               
               <Link
-                to="/pricing"
+                to="/how-it-works"
                 onClick={() => setShowMore(false)}
                 className="flex flex-col items-center p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
               >
                 <div className="w-12 h-12 bg-secondary-100 rounded-lg flex items-center justify-center mb-2">
-                  <span className="text-secondary-600 text-xl">💰</span>
+                  <span className="text-secondary-600 text-xl">❓</span>
                 </div>
                 <span className="text-sm font-medium text-gray-900 text-center">
-                  Pricing
+                  How It Works
                 </span>
               </Link>
               

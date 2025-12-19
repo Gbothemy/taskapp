@@ -15,7 +15,7 @@ import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import MobileNav from '../../components/layout/MobileNav';
-import { adminService } from '../../services/adminService';
+import adminService from '../../services/adminService';
 import toast from 'react-hot-toast';
 
 const UserManagement = () => {
@@ -319,6 +319,7 @@ const UserManagement = () => {
                           </Button>
                         )}
                         <Button
+                          onClick={() => toast('User messaging feature coming soon!')}
                           variant="outline"
                           size="sm"
                           className="text-secondary-600"

@@ -264,11 +264,12 @@ const EmployerDashboard = () => {
             <span>My Tasks</span>
           </Button>
           <Button 
+            onClick={() => navigate('/wallet')}
             variant="outline" 
             className="flex items-center justify-center p-6 h-auto"
           >
             <ChartBarIcon className="w-6 h-6 mr-2" />
-            <span>View Analytics</span>
+            <span>View Wallet</span>
           </Button>
         </div>
 

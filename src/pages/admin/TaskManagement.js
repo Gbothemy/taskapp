@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   BriefcaseIcon,
   MagnifyingGlassIcon,
@@ -16,10 +17,11 @@ import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import MobileNav from '../../components/layout/MobileNav';
-import { adminService } from '../../services/adminService';
+import adminService from '../../services/adminService';
 import toast from 'react-hot-toast';
 
 const TaskManagement = () => {
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('all');
@@ -309,6 +311,7 @@ const TaskManagement = () => {
                     <td className="px-6 py-4">
                       <div className="flex items-center space-x-2">
                         <Button
+                          onClick={() => navigate(`/tasks/${task.id}`)}
                           variant="outline"
                           size="sm"
                           className="text-info-600 border-info-600 hover:bg-info-50"

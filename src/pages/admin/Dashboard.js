@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
   UsersIcon,
   BriefcaseIcon,
@@ -16,11 +17,12 @@ import Button from '../../components/ui/Button';
 import Badge from '../../components/ui/Badge';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import MobileNav from '../../components/layout/MobileNav';
-import { adminService } from '../../services/adminService';
+import adminService from '../../services/adminService';
 import { supabase } from '../../services/supabase';
 import AdminDebug from '../../components/debug/AdminDebug';
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const { user } = useSelector((state) => state.auth);
   const [stats, setStats] = useState({
     totalUsers: 0,
@@ -150,9 +152,6 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-info-50/30 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Debug Panel */}
-        <AdminDebug />
-
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center space-x-4 mb-4">
@@ -257,27 +256,57 @@ const AdminDashboard = () => {
             <div className="bg-white/80 backdrop-blur-sm border border-primary-200/50 rounded-2xl p-6 shadow-xl">
               <h3 className="text-lg font-bold text-secondary-900 mb-4">Quick Actions</h3>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                <Button variant="outline" size="sm" className="flex flex-col items-center p-4 h-auto">
+                <Button 
+                  onClick={() => navigate('/admin/users')}
+                  variant="outline" 
+                  size="sm" 
+                  className="flex flex-col items-center p-4 h-auto"
+                >
                   <UsersIcon className="w-6 h-6 mb-2" />
                   <span className="text-xs">Manage Users</span>
                 </Button>
-                <Button variant="outline" size="sm" className="flex flex-col items-center p-4 h-auto">
+                <Button 
+                  onClick={() => navigate('/admin/tasks')}
+                  variant="outline" 
+                  size="sm" 
+                  className="flex flex-col items-center p-4 h-auto"
+                >
                   <BriefcaseIcon className="w-6 h-6 mb-2" />
                   <span className="text-xs">Review Tasks</span>
                 </Button>
-                <Button variant="outline" size="sm" className="flex flex-col items-center p-4 h-auto">
+                <Button 
+                  onClick={() => navigate('/admin/payments')}
+                  variant="outline" 
+                  size="sm" 
+                  className="flex flex-col items-center p-4 h-auto"
+                >
                   <CurrencyDollarIcon className="w-6 h-6 mb-2" />
                   <span className="text-xs">Process Payments</span>
                 </Button>
-                <Button variant="outline" size="sm" className="flex flex-col items-center p-4 h-auto">
+                <Button 
+                  onClick={() => navigate('/admin/analytics')}
+                  variant="outline" 
+                  size="sm" 
+                  className="flex flex-col items-center p-4 h-auto"
+                >
                   <ChartBarIcon className="w-6 h-6 mb-2" />
                   <span className="text-xs">View Analytics</span>
                 </Button>
-                <Button variant="outline" size="sm" className="flex flex-col items-center p-4 h-auto">
+                <Button 
+                  onClick={() => navigate('/admin/reports')}
+                  variant="outline" 
+                  size="sm" 
+                  className="flex flex-col items-center p-4 h-auto"
+                >
                   <ExclamationTriangleIcon className="w-6 h-6 mb-2" />
-                  <span className="text-xs">Review Flags</span>
+                  <span className="text-xs">View Reports</span>
                 </Button>
-                <Button variant="outline" size="sm" className="flex flex-col items-center p-4 h-auto">
+                <Button 
+                  onClick={() => navigate('/admin/settings')}
+                  variant="outline" 
+                  size="sm" 
+                  className="flex flex-col items-center p-4 h-auto"
+                >
                   <Cog6ToothIcon className="w-6 h-6 mb-2" />
                   <span className="text-xs">Settings</span>
                 </Button>
@@ -291,7 +320,11 @@ const AdminDashboard = () => {
           <div className="p-6 border-b border-secondary-200/50">
             <div className="flex items-center justify-between">
               <h3 className="text-lg font-bold text-secondary-900">Recent Activity</h3>
-              <Button variant="outline" size="sm">
+              <Button 
+                onClick={() => navigate('/admin/reports')}
+                variant="outline" 
+                size="sm"
+              >
                 <EyeIcon className="w-4 h-4 mr-2" />
                 View All
               </Button>

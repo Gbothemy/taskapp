@@ -68,6 +68,8 @@ export const tasksService = {
 
   async getTaskById(taskId) {
     try {
+      console.log('Fetching task by ID:', taskId);
+      
       const { data, error } = await supabase
         .from('tasks')
         .select(`
@@ -88,7 +90,12 @@ export const tasksService = {
         .eq('id', taskId)
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error fetching task:', error);
+        throw error;
+      }
+      
+      console.log('Task data fetched:', data);
       return data;
     } catch (error) {
       console.error('Error fetching task:', error);
@@ -574,6 +581,142 @@ export const paymentService = {
     } catch (error) {
       console.error('Error processing payment:', error);
       return { success: false, error: error.message };
+    }
+  },
+
+  async getPaymentMethods(userId) {
+    try {
+      // For now, return mock data. In a real implementation, this would fetch from database
+      const mockMethods = [
+        {
+          id: 'pm_1',
+          name: 'Primary Card',
+          type: 'card',
+          details: {
+            cardholderName: 'John Doe',
+            cardNumber: '4242424242424242',
+            expiryMonth: '12',
+            expiryYear: '2025',
+            cvv: '123'
+          },
+          isDefault: true,
+          created_at: new Date().toISOString()
+        }
+      ];
+
+      // Try to get from localStorage for demo purposes
+      const stored = localStorage.getItem(`payment_methods_${userId}`);
+      if (stored) {
+        return JSON.parse(stored);
+      }
+
+      return mockMethods;
+    } catch (error) {
+      console.error('Error fetching payment methods:', error);
+      return [];
+    }
+  },
+
+  async addPaymentMethod(userId, methodData) {
+    try {
+      const newMethod = {
+        id: `pm_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+        ...methodData,
+        user_id: userId,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      // Get existing methods
+      const existingMethods = await this.getPaymentMethods(userId);
+      
+      // If this is set as default, remove default from others
+      if (newMethod.isDefault) {
+        existingMethods.forEach(method => {
+          method.isDefault = false;
+        });
+      }
+
+      // Add new method
+      const updatedMethods = [...existingMethods, newMethod];
+      
+      // Store in localStorage for demo purposes
+      localStorage.setItem(`payment_methods_${userId}`, JSON.stringify(updatedMethods));
+
+      return newMethod;
+    } catch (error) {
+      console.error('Error adding payment method:', error);
+      throw error;
+    }
+  },
+
+  async updatePaymentMethod(methodId, updates) {
+    try {
+      // This is a simplified implementation for demo purposes
+      // In a real app, you'd update the database
+      console.log('Updating payment method:', methodId, updates);
+      
+      return {
+        id: methodId,
+        ...updates,
+        updated_at: new Date().toISOString()
+      };
+    } catch (error) {
+      console.error('Error updating payment method:', error);
+      throw error;
+    }
+  },
+
+  async deletePaymentMethod(methodId) {
+    try {
+      // Get user ID from the method (in a real implementation, you'd have this context)
+      const allUsers = Object.keys(localStorage).filter(key => key.startsWith('payment_methods_'));
+      
+      for (const userKey of allUsers) {
+        const methods = JSON.parse(localStorage.getItem(userKey) || '[]');
+        const filteredMethods = methods.filter(method => method.id !== methodId);
+        
+        if (filteredMethods.length !== methods.length) {
+          localStorage.setItem(userKey, JSON.stringify(filteredMethods));
+          break;
+        }
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error deleting payment method:', error);
+      throw error;
+    }
+  },
+
+  async setDefaultPaymentMethod(methodId) {
+    try {
+      // Get user ID from the method (in a real implementation, you'd have this context)
+      const allUsers = Object.keys(localStorage).filter(key => key.startsWith('payment_methods_'));
+      
+      for (const userKey of allUsers) {
+        const methods = JSON.parse(localStorage.getItem(userKey) || '[]');
+        let updated = false;
+        
+        const updatedMethods = methods.map(method => {
+          if (method.id === methodId) {
+            updated = true;
+            return { ...method, isDefault: true };
+          } else {
+            return { ...method, isDefault: false };
+          }
+        });
+        
+        if (updated) {
+          localStorage.setItem(userKey, JSON.stringify(updatedMethods));
+          break;
+        }
+      }
+
+      return true;
+    } catch (error) {
+      console.error('Error setting default payment method:', error);
+      throw error;
     }
   },
 

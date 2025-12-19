@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { 
   CurrencyDollarIcon, 
   ArrowUpIcon, 
@@ -20,6 +21,7 @@ import toast from 'react-hot-toast';
 
 const Wallet = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { user, profile } = useSelector((state) => state.auth);
   const { wallet, transactions, loading } = useSelector((state) => state.wallet);
   const [activeTab, setActiveTab] = useState('overview');
@@ -190,6 +192,7 @@ const Wallet = () => {
             Withdraw Funds
           </Button>
           <Button 
+            onClick={() => navigate('/payment-methods')}
             variant="outline"
             size="lg"
           >

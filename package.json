@@ -48,6 +48,7 @@
     "db:migrate": "echo 'Run the SQL from database/complete-schema.sql in your Supabase dashboard'",
     "db:seed": "node scripts/seed-database.js",
     "demo:create": "node scripts/create-demo-accounts.js",
+    "deploy:production": "node scripts/deploy-production.js",
     "health-check": "node scripts/health-check.js"
   },
   "eslintConfig": {

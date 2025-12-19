@@ -10,13 +10,10 @@ const Footer = () => {
       { name: 'About Us', href: '/about' },
       { name: 'How It Works', href: '/how-it-works' },
       { name: 'Success Stories', href: '/success-stories' },
-      { name: 'Pricing', href: '/pricing' },
     ],
     support: [
       { name: 'Help Center', href: '/help' },
       { name: 'Contact Us', href: '/contact' },
-      { name: 'Safety & Security', href: '/safety' },
-      { name: 'Trust & Safety', href: '/trust-safety' },
     ],
     legal: [
       { name: 'Terms of Service', href: '/terms-of-service' },
@@ -25,10 +22,9 @@ const Footer = () => {
       { name: 'Terms & Conditions', href: '/terms-and-conditions' },
     ],
     resources: [
-      { name: 'Blog', href: '/blog' },
-      { name: 'API Documentation', href: '/api-docs' },
-      { name: 'Developer Resources', href: '/developers' },
-      { name: 'Status Page', href: '/status' },
+      { name: 'Browse Tasks', href: '/tasks' },
+      { name: 'Create Account', href: '/register' },
+      { name: 'Sign In', href: '/login' },
     ],
   };
 

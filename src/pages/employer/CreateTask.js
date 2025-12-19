@@ -6,7 +6,7 @@ import Button from '../../components/ui/Button';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import FileUpload from '../../components/ui/FileUpload';
 import Card from '../../components/ui/Card';
-import TaskDebug from '../../components/debug/TaskDebug';
+
 import toast from 'react-hot-toast';
 
 const CreateTask = () => {
@@ -128,8 +128,7 @@ const CreateTask = () => {
           </p>
         </div>
 
-        {/* Debug Component */}
-        <TaskDebug />
+
 
         <Card className="p-8">
           <form onSubmit={handleSubmit} className="space-y-6">

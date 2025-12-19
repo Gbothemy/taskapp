@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { supabase } from '../../services/supabase';
-import { adminService } from '../../services/adminService';
+import adminService from '../../services/adminService';
 import AdminDebug from '../../components/debug/AdminDebug';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 

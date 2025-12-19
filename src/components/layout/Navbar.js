@@ -43,16 +43,20 @@ const Navbar = () => {
     ],
     employer: [
       { name: 'Dashboard', href: '/dashboard' },
-      { name: 'Create Task', href: '/create-task' },
-      { name: 'My Tasks', href: '/my-tasks' },
-      { name: 'Review Submissions', href: '/review-submissions' },
+      { name: 'Create Task', href: '/employer/create-task' },
+      { name: 'My Tasks', href: '/employer/my-tasks' },
+      { name: 'Review Submissions', href: '/employer/review-submissions' },
       { name: 'Wallet', href: '/wallet' },
     ],
     admin: [
-      { name: 'Dashboard', href: '/dashboard' },
+      { name: 'Admin Panel', href: '/admin' },
+      { name: 'Dashboard', href: '/admin/dashboard' },
+      { name: 'Analytics', href: '/admin/analytics' },
+      { name: 'Reports', href: '/admin/reports' },
       { name: 'User Management', href: '/admin/users' },
       { name: 'Task Management', href: '/admin/tasks' },
       { name: 'Payment Management', href: '/admin/payments' },
+      { name: 'Settings', href: '/admin/settings' },
     ],
   };
 

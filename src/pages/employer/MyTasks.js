@@ -17,11 +17,12 @@ import Badge from '../../components/ui/Badge';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import MobileNav from '../../components/layout/MobileNav';
 import { employerService } from '../../services/employerService';
+import TaskDebugInfo from '../../components/debug/TaskDebugInfo';
 import toast from 'react-hot-toast';
 
 const MyTasks = () => {
   const navigate = useNavigate();
-  const { user } = useSelector((state) => state.auth);
+  const { user, profile } = useSelector((state) => state.auth);
   
   const [tasks, setTasks] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
@@ -32,7 +33,7 @@ const MyTasks = () => {
 
   useEffect(() => {
     const fetchTasks = async () => {
-      if (!user?.id || user.user_type !== 'employer') {
+      if (!user?.id || profile?.user_type !== 'employer') {
         setLoading(false);
         return;
       }
@@ -45,6 +46,7 @@ const MyTasks = () => {
           search: searchTerm
         };
         const tasksData = await employerService.getEmployerTasks(user.id, filters);
+        console.log('Loaded tasks:', tasksData);
         setTasks(tasksData);
       } catch (err) {
         console.error('Error fetching employer tasks:', err);
@@ -74,11 +76,15 @@ const MyTasks = () => {
 
   const handleTaskAction = async (taskId, action) => {
     try {
+      console.log('Task action:', action, 'for task:', taskId);
+      
       switch (action) {
         case 'view':
-          navigate(`/tasks/${taskId}`);
+          console.log('Navigating to task detail view:', `/employer/task/${taskId}`);
+          navigate(`/employer/task/${taskId}`);
           break;
         case 'edit':
+          console.log('Navigating to task edit:', `/employer/edit-task/${taskId}`);
           navigate(`/employer/edit-task/${taskId}`);
           break;
         case 'pause':
@@ -96,21 +102,24 @@ const MyTasks = () => {
           toast.success('Task resumed successfully');
           break;
         case 'delete':
-          await employerService.deleteTask(taskId);
-          setTasks(tasks.filter(task => task.id !== taskId));
-          toast.success('Task deleted successfully');
+          if (window.confirm('Are you sure you want to delete this task?')) {
+            await employerService.deleteTask(taskId);
+            setTasks(tasks.filter(task => task.id !== taskId));
+            toast.success('Task deleted successfully');
+          }
           break;
         default:
+          console.warn('Unknown task action:', action);
           break;
       }
     } catch (error) {
       console.error('Error updating task:', error);
-      toast.error('Failed to update task');
+      toast.error('Failed to update task: ' + error.message);
     }
   };
 
   // Redirect if user is not an employer
-  if (user && user.user_type !== 'employer') {
+  if (user && profile && profile.user_type !== 'employer') {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-secondary-50/30 flex items-center justify-center">
         <div className="text-center">
@@ -186,14 +195,25 @@ const MyTasks = () => {
                 </p>
               </div>
             </div>
-            <Button 
-              onClick={() => navigate('/employer/create-task')}
-              className="bg-gradient-to-r from-primary-600 to-primary-700"
-              size="lg"
-            >
-              <PlusIcon className="w-5 h-5 mr-2" />
-              Create New Task
-            </Button>
+            <div className="flex space-x-2">
+              <Button 
+                onClick={() => navigate('/employer/create-task')}
+                className="bg-gradient-to-r from-primary-600 to-primary-700"
+                size="lg"
+              >
+                <PlusIcon className="w-5 h-5 mr-2" />
+                Create New Task
+              </Button>
+              {process.env.NODE_ENV === 'development' && (
+                <Button 
+                  onClick={() => navigate('/debug/tasks')}
+                  variant="outline"
+                  size="lg"
+                >
+                  Debug Test
+                </Button>
+              )}
+            </div>
           </div>
         </div>
 
@@ -384,6 +404,9 @@ const MyTasks = () => {
                   <PencilIcon className="w-4 h-4" />
                 </Button>
               </div>
+
+              {/* Debug Info - Remove in production */}
+              <TaskDebugInfo task={task} showDetails={process.env.NODE_ENV === 'development'} />
             </div>
           ))}
         </div>

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { tasksService, submissionsService, analyticsService } from '../../services/supabase';
 import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
@@ -9,6 +10,7 @@ import toast from 'react-hot-toast';
 import { formatDistanceToNow } from 'date-fns';
 
 const ReviewSubmissions = () => {
+  const navigate = useNavigate();
   const { user } = useSelector(state => state.auth);
   const [tasks, setTasks] = useState([]);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -137,7 +139,7 @@ const ReviewSubmissions = () => {
             <p className="text-gray-500 mb-6">
               You don't have any tasks with submissions yet. Create tasks to start receiving submissions.
             </p>
-            <Button onClick={() => window.location.href = '/employer/create-task'}>
+            <Button onClick={() => navigate('/employer/create-task')}>
               Create Task
             </Button>
           </Card>
