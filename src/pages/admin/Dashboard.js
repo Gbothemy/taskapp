@@ -17,6 +17,8 @@ import Badge from '../../components/ui/Badge';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import MobileNav from '../../components/layout/MobileNav';
 import { adminService } from '../../services/adminService';
+import { supabase } from '../../services/supabase';
+import AdminDebug from '../../components/debug/AdminDebug';
 
 const AdminDashboard = () => {
   const { user } = useSelector((state) => state.auth);
@@ -37,25 +39,61 @@ const AdminDashboard = () => {
 
   useEffect(() => {
     const fetchDashboardData = async () => {
+      const timeoutId = setTimeout(() => {
+        setError('Request timed out. Please check your connection and try again.');
+        setLoading(false);
+      }, 15000); // 15 second timeout
+
       try {
         setLoading(true);
+        setError(null);
+        
+        console.log('Admin Dashboard: Starting data fetch...');
+        console.log('Current user:', user);
+        
+        // Test database connection first with a simple query
+        const { data: testData, error: testError } = await supabase
+          .from('users')
+          .select('id')
+          .limit(1);
+          
+        if (testError) {
+          console.error('Database connection test failed:', testError);
+          throw new Error('Database connection failed: ' + testError.message);
+        }
+        
+        console.log('Database connection test passed');
+        
         const [dashboardStats, activityData] = await Promise.all([
           adminService.getDashboardStats(),
           adminService.getRecentActivity(10)
         ]);
 
+        console.log('Dashboard stats received:', dashboardStats);
+        console.log('Activity data received:', activityData);
+
+        clearTimeout(timeoutId);
         setStats(dashboardStats);
         setRecentActivity(activityData);
       } catch (err) {
+        clearTimeout(timeoutId);
         console.error('Error fetching dashboard data:', err);
-        setError('Failed to load dashboard data');
+        setError(`Failed to load dashboard data: ${err.message}`);
       } finally {
         setLoading(false);
       }
     };
 
     if (user?.user_type === 'admin') {
+      console.log('User is admin, fetching dashboard data...');
       fetchDashboardData();
+    } else if (user && user.user_type !== 'admin') {
+      console.log('User is not admin, redirecting...');
+      setLoading(false);
+      setError('Access denied. Admin privileges required.');
+    } else {
+      console.log('User not loaded yet:', user);
+      // Don't set loading to false here, let the auth system handle it
     }
   }, [user]);
 
@@ -112,6 +150,9 @@ const AdminDashboard = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-info-50/30 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Debug Panel */}
+        <AdminDebug />
+
         {/* Header */}
         <div className="mb-8">
           <div className="flex items-center space-x-4 mb-4">

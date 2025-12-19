@@ -59,6 +59,9 @@ import UserManagement from './pages/admin/UserManagement';
 import TaskManagement from './pages/admin/TaskManagement';
 import PaymentManagement from './pages/admin/PaymentManagement';
 
+// Debug Pages
+import AdminTest from './pages/debug/AdminTest';
+
 function App() {
   const dispatch = useDispatch();
   const { profile, isAuthenticated, loading } = useSelector((state) => state.auth);
@@ -271,6 +274,9 @@ function App() {
               <PaymentManagement />
             </ProtectedRoute>
           } />
+
+          {/* Debug Routes */}
+          <Route path="/debug/admin" element={<AdminTest />} />
 
           {/* Catch all route */}
           <Route path="*" element={<Navigate to="/" />} />
