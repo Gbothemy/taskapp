@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { tasksService, categoriesService, analyticsService } from '../../services/supabase';
 import Button from '../../components/ui/Button';
 import LoadingSpinner from '../../components/ui/LoadingSpinner';
 import FileUpload from '../../components/ui/FileUpload';
 import Card from '../../components/ui/Card';
+import TaskDebug from '../../components/debug/TaskDebug';
 import toast from 'react-hot-toast';
 
 const CreateTask = () => {
   const navigate = useNavigate();
+  const { user } = useSelector((state) => state.auth);
   
   const [loading, setLoading] = useState(false);
   const [categories, setCategories] = useState([]);
@@ -61,6 +63,12 @@ const CreateTask = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
+    if (!user?.id) {
+      toast.error('You must be logged in to create a task');
+      navigate('/login');
+      return;
+    }
+
     if (!formData.title || !formData.description || !formData.category_id || !formData.reward_amount) {
       toast.error('Please fill in all required fields');
       return;
@@ -76,16 +84,21 @@ const CreateTask = () => {
     try {
       const taskData = {
         ...formData,
+        employer_id: user?.id,
         reward_amount: parseFloat(formData.reward_amount),
         max_submissions: parseInt(formData.max_submissions),
+        required_skills: formData.requirements ? [formData.requirements] : [],
         attachments: attachments.map(file => ({
           name: file.name,
           url: file.url,
           size: file.size,
           type: file.type
-        }))
+        })),
+        deliverables: formData.deliverables ? [formData.deliverables] : [],
+        allow_revisions: !formData.auto_approve
       };
 
+      console.log('Creating task with data:', taskData);
       const newTask = await tasksService.createTask(taskData);
       
       // Track analytics
@@ -114,6 +127,9 @@ const CreateTask = () => {
             Post a task and connect with skilled professionals
           </p>
         </div>
+
+        {/* Debug Component */}
+        <TaskDebug />
 
         <Card className="p-8">
           <form onSubmit={handleSubmit} className="space-y-6">

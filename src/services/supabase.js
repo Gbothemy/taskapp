@@ -98,27 +98,63 @@ export const tasksService = {
 
   async createTask(taskData) {
     try {
+      console.log('Creating task with data:', taskData);
+      
+      // Validate required fields
+      if (!taskData.employer_id) {
+        throw new Error('Employer ID is required');
+      }
+      if (!taskData.title) {
+        throw new Error('Task title is required');
+      }
+      if (!taskData.description) {
+        throw new Error('Task description is required');
+      }
+      if (!taskData.category_id) {
+        throw new Error('Category is required');
+      }
+      if (!taskData.reward_amount) {
+        throw new Error('Reward amount is required');
+      }
+
+      const insertData = {
+        title: taskData.title,
+        description: taskData.description,
+        employer_id: taskData.employer_id,
+        category_id: taskData.category_id,
+        reward_amount: parseFloat(taskData.reward_amount),
+        deadline: taskData.deadline || null,
+        difficulty_level: taskData.difficulty_level || 'medium',
+        requirements: taskData.requirements || null,
+        deliverables: taskData.deliverables || null,
+        max_submissions: parseInt(taskData.max_submissions) || 1,
+        status: 'active',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+
+      // Only add optional fields if they exist
+      if (taskData.required_skills && Array.isArray(taskData.required_skills)) {
+        insertData.required_skills = taskData.required_skills;
+      }
+      if (taskData.attachments && Array.isArray(taskData.attachments)) {
+        insertData.attachments = taskData.attachments;
+      }
+
+      console.log('Insert data:', insertData);
+
       const { data, error } = await supabase
         .from('tasks')
-        .insert([{
-          title: taskData.title,
-          description: taskData.description,
-          employer_id: taskData.employer_id,
-          category_id: taskData.category_id,
-          reward_amount: taskData.reward_amount,
-          deadline: taskData.deadline,
-          difficulty_level: taskData.difficulty_level || 'medium',
-          required_skills: taskData.required_skills || [],
-          attachments: taskData.attachments || [],
-          deliverables: taskData.deliverables || [],
-          max_submissions: taskData.max_submissions || 1,
-          allow_revisions: taskData.allow_revisions !== false,
-          status: 'active'
-        }])
+        .insert([insertData])
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Supabase error:', error);
+        throw new Error(`Database error: ${error.message}`);
+      }
+      
+      console.log('Task created successfully:', data);
       return data;
     } catch (error) {
       console.error('Error creating task:', error);
