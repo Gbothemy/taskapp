@@ -1,0 +1,20 @@
+{
+  "short_name": "TaskApp",
+  "name": "TaskApp - Professional Task Platform",
+  "icons": [
+    {
+      "src": "logo task.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg"
+    },
+    {
+      "src": "logo task.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#D4AF37",
+  "background_color": "#ffffff"
+}
